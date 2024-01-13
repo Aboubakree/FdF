@@ -1,6 +1,8 @@
-SRC = minilibxTutorial.c
+# SRC = fdf.c fdf_utils.c get_next_line.c get_next_line_utils.c read_map.c libft.c ft_split.c
 
-OBJ = minilibxTutorial.o
+# OBJ = fdf.o fdf_utils.o get_next_line.o get_next_line_utils.o read_map.o libft.o ft_split.o
+SRC = test_draw.c
+OBJ = test_draw.o
 
 NAME = fdf
 
