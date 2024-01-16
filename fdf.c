@@ -6,7 +6,7 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 02:02:40 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/13 06:32:04 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/16 17:32:27 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,43 +28,143 @@ int get_steps(t_point point1, t_point point2)
 
 void draw_line(t_img img, t_point point1, t_point point2)
 {
-	float x_increment;
-	float y_increment;
+	float   x_increment;
+	float   y_increment;
     t_point result_point;
-    int     steps;
+    int     k;
 
-    steps = get_steps(point1, point2);
-	x_increment = (point2.x - point1.x) / (float)steps;
-	y_increment = (point2.y - point1.y) / (float)steps;
+	x_increment = (point2.x - point1.x) / (float)get_steps(point1, point2);
+	y_increment = (point2.y - point1.y) / (float)get_steps(point1, point2);
     result_point.x = point1.x;
     result_point.y = point1.y;
     result_point.color = point1.color;
-	mlx_pixel_put(img.window.mlx_ptr, img.window.window_ptr, (int)result_point.x, (int)result_point.y, 0x0000FF);
-
-	for (int k = 0; k < steps; k++)
+	put_pixel_img(img, (int)result_point.x, (int)result_point.y, 0xFFFFFF);
+    k = 0;
+	while(k < get_steps(point1, point2))
 	{
 		result_point.x = result_point.x + x_increment;
 		result_point.y = result_point.y + y_increment;
-		mlx_pixel_put(img.window.mlx_ptr, img.window.window_ptr, (int)result_point.x, (int)result_point.y, 0x0000FF);
+		put_pixel_img(img, (int)result_point.x, (int)result_point.y, 0xFFFFFF);
+        k++;
 	}
 }
 
-void    draw_map(t_img img,t_map  *map, int x_center, int y_center)
+void    get_points(t_map *node)
 {
-    t_point point1;
-    t_point point2;
+    int     j;
+    int     x_lenth;
+
+    x_lenth = get_X_lenth(node->z_plus_color_values) * 20;
+    j = 0;
+    while(j < x_lenth - 20)
+    {
+        point1.x = j + 500;
+        point1.y = i + 150;
+        point2.x = j + 20 + 500;
+        point2.y = i + 150;
+        draw_line(img, point1, point2);
+        j += 20;
+    }
+}
+
+int power(int base,int pow)
+{
+    if (pow == 0)
+        return (1);
+    return (base * power(base, -- pow));
+}
+
+int get_point_color_extended(char *first_hexa, int i)
+{
+    int result;
+    int p;
+
+    result = 0;
+    p = 0;
+    if (i == 0)
+        return (0xFFFFFF);
+    while(i-- > 0)
+    {
+        if ((*(first_hexa + i) >= '0' && *(first_hexa + i) <= '9'))
+            result += (*(first_hexa + i) - '0') * power(16, p);
+        else if ((*(first_hexa + i) >= 'A' && *(first_hexa + i) <= 'F'))
+            result += ((*(first_hexa + i) - 'A') + 10) * power(16, p);
+        else if ((*(first_hexa + i) >= 'a' && *(first_hexa + i) <= 'f'))
+            result += ((*(first_hexa + i) - 'a') + 10) * power(16, p);
+        p ++;
+    }
+    return (result);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	int				i;
+
+	i = 0;
+	while (s[i])
+	{
+		if ((unsigned char)s[i] == (unsigned char)c)
+			return ((char *)&s[i]);
+		i ++;
+	}
+	if ((unsigned char)c == (unsigned char) '\0')
+		return ((char *)&s[i]);
+	return (NULL);
+}
+
+int get_point_color(char *str)
+{
+    char    *comma;
+    int     i;
+    
+    comma = ft_strchr(str, ',');
+    if (comma == NULL)
+        return (0xFFFFFF);
+    if ((*(comma + 1) == '\0') || (*(comma + 1) != '0'))
+        return (0xFFFFFF);
+    if ((*(comma + 2) == '\0') || (*(comma + 2) != 'x'))
+        return (0xFFFFFF);
+    i = 0;
+    while (*(comma + 3 + i))
+    {
+        if (i > 6)
+            return (0xFFFFFF);
+        else if ((*(comma + 3 + i) >= 'A' && *(comma + 3 + i) <= 'F') || (*(comma + 3 + i) >= 'a' && *(comma + 3 + i) <= 'f'))
+            i ++;
+        else if ((*(comma + 3 + i) >= '0' && *(comma + 3 + i) <= '9'))
+            i ++;
+        else
+            return (0xFFFFFF);
+    }
+    return (get_point_color_extended((comma + 3), i));
+}
+
+draw_map_get_X(t_img img,t_map  *map, t_referencial origines, int y)
+{
+    t_point current_point;
+    t_point next_point;
+    int     j;
+    
+    j = 0;
+    while (j < origines.x_axis_lenght )
+    {
+        current_point.x = j + origines.x_start_origine;
+        current_point.y = y + origines.y_start_origine;
+        current_point.z = ft_atoi(map->z_plus_color_values[j]);
+        current_point.color = get_point_color(map->z_plus_color_values[j]);
+        if (j < origines.)
+    }
+}
+
+void    draw_map_get_Y(t_img img,t_map  *map, t_referencial origines)
+{
     int     i;
 
     i = 0;
-    while (map)
+    while (i < origines.y_axis_lenght )
     {
-        x_lenth = get_X_lenth(map->z_values) * 10;
-        while(j < x_lenth)
-        {
-            put_pixel_img(img, x_center + j, y_center + i, 0xFFFFFF);
-            draw_line(img); 
-            j += 10;
-        }
+        draw_map_get_X( img, map, origines, i);
+        i ++;
         map = map->next;
     }
 }
@@ -103,19 +203,18 @@ void draw_referential_border(t_img img)
 
 int main(int argc, char **argv)
 {
-    t_img   img;
-    t_map   *map;
-    t_map   *test;
+    t_img           img;
+    t_map           *map;
+    t_referencial   origines;
 
     map = NULL;
-    map = read_map(argc, argv);
-    test = map;
+    map = read_map(argc, argv, &origines);
     if (!map)
         return (1);
-    img = new_img(1920, 1080, 1720, 880);
+    img = new_img(origines.window_width, origines.window_height, origines.img_width, origines.img_height);
     draw_img_border(img);
     // draw_referential_border(img);
-    draw_map(img, map, 100, 100);
+    draw_map_get_Y(img, map, origines);
     mlx_put_image_to_window(img.window.mlx_ptr,img.window.window_ptr, img.img_ptr, 100, 100);
     
     mlx_hook(img.window.window_ptr, 17, 0, exit_tutorial, &img);

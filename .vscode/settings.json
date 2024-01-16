@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "mlx_int.h": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "mlx.h": "c"
     }
 }

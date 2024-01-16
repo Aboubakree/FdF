@@ -6,13 +6,12 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 21:40:01 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/13 06:29:32 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/16 04:33:15 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FDF_H
-#define FDF_H
-#endif
+# define FDF_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,9 +58,15 @@ typedef struct s_point
 
 typedef struct s_referencial
 {
-    int x;
-    int y;
+    int window_height;
+    int window_width;
+    int img_height;
+    int img_width;
+    int x_start_origine;
+    int y_start_origine;
     int scale;
+    int	x_axis_lenght;
+    int	y_axis_lenght;
 }               t_referencial;
 
 char	    **ft_split(char const *s, char c);
@@ -70,8 +75,11 @@ t_img       new_img(int x_window, int y_window, int x_img, int y_img);
 void        put_pixel_img(t_img img, int x, int y, int color);
 t_map       *new_line();
 void        add_back(t_map **list, char *line);
-t_map       *read_map(int argc, char **argv);
+t_map       *read_map(int argc, char **argv, t_referencial *origines);
 int         exit_tutorial(t_img *img);
 int	        get_X_lenth(char **s);
 int	        ft_atoi(char *str);
 int	        ft_lstsize(t_map *lst);
+int         ft_printf(const char *str, ...);
+
+#endif

@@ -6,7 +6,7 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 08:16:30 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/12 22:21:54 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/15 09:05:09 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,67 @@ void	get_z_values(t_map	**map)
 	t_map	*temp;
 
 	temp = *map;
+	if (temp == NULL)
+	{
+		ft_printf("No data found !!");
+		exit(1);
+	}
 	while (temp)
 	{
-		temp->z_values = ft_split(temp->line, ' ');
+		temp->z_plus_color_values = ft_split(temp->line, ' ');
 		temp = temp->next;
 	}
 }
 
-t_map	*read_map(int argc, char **argv)
+void	fill_origines(t_referencial *origines)
+{
+	int	b;
+
+	origines->window_width = 1920;
+	origines->window_height = 1080;
+	origines->img_width = (int)((origines->window_width) * 0.8);
+	origines->img_height = (int)((origines->window_height) * 0.8);
+	origines->x_start_origine = (int)((origines->img_width) * 0.1);
+	origines->y_start_origine = (int)((origines->img_height) * 0.5);
+	origines->scale = 3;
+	b = 1;
+	while (b && origines->scale < 15)
+	{
+		b = 0;
+		if (origines->x_axis_lenght < (origines->img_width / origines->scale))
+		{
+			origines->scale += 3;
+			b = 1;
+		}
+		if (origines->y_axis_lenght < (origines->img_height / origines->scale))
+		{
+			origines->scale += 3;
+			b = 1;
+		}
+	}
+}
+
+void	check_map(t_map *map,t_referencial *origines)
+{
+	origines->x_axis_lenght = get_X_lenth(map->z_plus_color_values);
+	if (map->next)
+		map = map->next;
+	origines->y_axis_lenght = 1;
+	while(map)
+	{
+		origines->y_axis_lenght ++;
+		if (origines->x_axis_lenght > get_X_lenth(map->z_plus_color_values))
+		{
+			ft_printf("Found wrong line length. Exiting.");
+			// free the map
+			exit(1);
+		}
+		map = map->next;
+	}
+	fill_origines(origines);
+}
+
+t_map	*read_map(int argc, char **argv, t_referencial *origines)
 {
 	t_map *map;
 	char *line;
@@ -69,7 +122,7 @@ t_map	*read_map(int argc, char **argv)
 	int fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
 	{
-		printf("Error: Could not open file %s !!\n", argv[1]);
+		ft_printf("Error: Could not open file %s !!\n", argv[1]);
 		return (0);
 	}
 
@@ -81,6 +134,7 @@ t_map	*read_map(int argc, char **argv)
 	}
 	close(fd);
 	get_z_values(&map);
+	check_map(map, origines);
 	return (map);
 }
 
