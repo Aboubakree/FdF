@@ -1,16 +1,16 @@
-SRC = fdf.c fdf_utils.c get_next_line.c get_next_line_utils.c read_map.c libft.c ft_split.c
+SRC = fdf.c fdf_utils.c get_next_line.c get_next_line_utils.c read_map.c libft.c ft_split.c ft_printf.c 
 
-OBJ = fdf.o fdf_utils.o get_next_line.o get_next_line_utils.o read_map.o libft.o ft_split.o
+OBJ = fdf.o fdf_utils.o get_next_line.o get_next_line_utils.o read_map.o libft.o ft_split.o ft_printf.o 
 
 NAME = fdf
 
-CFLAGS = -Wall -Wextra -Werror -Imlx
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address -Imlx
 
 all : $(NAME)
 
 $(NAME) : $(OBJ)
 	@cc $(CFLAGS) -c $(SRC)
-	$(CC) $(OBJ) -Imlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
+	$(CC) $(OBJ) -g -fsanitize=address -Imlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
 
 clean :
 	rm -f $(OBJ)

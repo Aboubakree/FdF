@@ -6,7 +6,7 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 02:02:40 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/16 17:32:27 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/19 18:14:42 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,24 +49,6 @@ void draw_line(t_img img, t_point point1, t_point point2)
 	}
 }
 
-void    get_points(t_map *node)
-{
-    int     j;
-    int     x_lenth;
-
-    x_lenth = get_X_lenth(node->z_plus_color_values) * 20;
-    j = 0;
-    while(j < x_lenth - 20)
-    {
-        point1.x = j + 500;
-        point1.y = i + 150;
-        point2.x = j + 20 + 500;
-        point2.y = i + 150;
-        draw_line(img, point1, point2);
-        j += 20;
-    }
-}
-
 int power(int base,int pow)
 {
     if (pow == 0)
@@ -101,7 +83,7 @@ char	*ft_strchr(const char *s, int c)
 	int				i;
 
 	i = 0;
-	while (s[i])
+	while (s && s[i])
 	{
 		if ((unsigned char)s[i] == (unsigned char)c)
 			return ((char *)&s[i]);
@@ -139,20 +121,52 @@ int get_point_color(char *str)
     return (get_point_color_extended((comma + 3), i));
 }
 
-draw_map_get_X(t_img img,t_map  *map, t_referencial origines, int y)
+t_point get_next_X_point(t_map *map, int j, int y, t_referencial origines)
+{
+    t_point point;
+
+    point.x = (j + 1) * origines.scale + origines.x_start_origine;
+    point.y = y * origines.scale + origines.y_start_origine;
+    point.z = ft_atoi(map->z_plus_color_values[j + 1]);
+    point.color = get_point_color(map->z_plus_color_values[j + 1]);
+    return (point);
+}
+
+t_point get_next_Y_point(t_map *map, int j, int y, t_referencial origines)
+{
+    t_point point;
+
+    point.x = j * origines.scale + origines.x_start_origine;
+    point.y = (y + 1) * origines.scale + origines.y_start_origine;
+    point.z = ft_atoi(map->z_plus_color_values[j]);
+    point.color = get_point_color(map->z_plus_color_values[j]);
+    return (point);
+}
+
+void   draw_map_get_X(t_img img,t_map  *map, t_referencial origines, int y)
 {
     t_point current_point;
     t_point next_point;
     int     j;
     
     j = 0;
-    while (j < origines.x_axis_lenght )
+    while (j < origines.x_axis_lenght)
     {
-        current_point.x = j + origines.x_start_origine;
-        current_point.y = y + origines.y_start_origine;
-        current_point.z = ft_atoi(map->z_plus_color_values[j]);
+        current_point.x = j * origines.scale + origines.x_start_origine;
+        current_point.y = y * origines.scale + origines.y_start_origine;
+        current_point.z = ft_atoi(map->z_plus_color_values[j]);  
         current_point.color = get_point_color(map->z_plus_color_values[j]);
-        if (j < origines.)
+        if (j < origines.x_axis_lenght - 1)
+        {
+            next_point = get_next_X_point(map, j, y, origines);
+            draw_line(img, current_point, next_point);
+        }
+        if (y < origines.y_axis_lenght - 1)
+        {
+            next_point = get_next_Y_point(map->next, j, y, origines);
+            draw_line(img, current_point, next_point);
+        }
+        j ++;
     }
 }
 
@@ -161,12 +175,15 @@ void    draw_map_get_Y(t_img img,t_map  *map, t_referencial origines)
     int     i;
 
     i = 0;
-    while (i < origines.y_axis_lenght )
+    while (i < origines.y_axis_lenght && map)
     {
         draw_map_get_X( img, map, origines, i);
         i ++;
         map = map->next;
     }
+    if (origines.x_axis_lenght > 1 || origines.y_axis_lenght > 1)
+        mlx_put_image_to_window(img.window.mlx_ptr,img.window.window_ptr, img.img_ptr,
+                                origines.window_width * 0.15, origines.window_height * 0.15);
 }
 
 void draw_img_border(t_img img)
@@ -175,30 +192,17 @@ void draw_img_border(t_img img)
     int j;
     
     i = 0;
-    while(i < 880)
+    while(i < img.img_height)
     {
         j = 0;
-        while(j < 1720)
+        while(j < img.img_width)
         {
-            if (i == 0 || i == 879 || j == 0 || j == 1719)
+            if (i == 0 || i == img.img_height - 1 || j == 0 || j == img.img_width - 1)
                 put_pixel_img(img, 0 + j, 0 + i, 0xFFFFFF);
             j ++;
         }
         i ++;
     }
-}
-
-void draw_referential_border(t_img img)
-{
-    int i;
-
-    i = 0;
-    while (i < 500)
-        put_pixel_img(img, 500, 150 + i++, 0xFFFFFF);
-    i = 0;
-    while (i < 700)
-        put_pixel_img(img, 500 + i++, 150, 0xFFFFFF);
-    // center(500,150)
 }
 
 int main(int argc, char **argv)
@@ -213,9 +217,7 @@ int main(int argc, char **argv)
         return (1);
     img = new_img(origines.window_width, origines.window_height, origines.img_width, origines.img_height);
     draw_img_border(img);
-    // draw_referential_border(img);
     draw_map_get_Y(img, map, origines);
-    mlx_put_image_to_window(img.window.mlx_ptr,img.window.window_ptr, img.img_ptr, 100, 100);
     
     mlx_hook(img.window.window_ptr, 17, 0, exit_tutorial, &img);
     mlx_loop(img.window.mlx_ptr);

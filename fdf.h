@@ -6,7 +6,7 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 21:40:01 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/16 04:33:15 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/16 18:25:25 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef struct s_referencial
     int	y_axis_lenght;
 }               t_referencial;
 
+char	    *ft_strchr(const char *s, int c);
 char	    **ft_split(char const *s, char c);
 t_window    new_window(int x, int y, char  *title);
 t_img       new_img(int x_window, int y_window, int x_img, int y_img);

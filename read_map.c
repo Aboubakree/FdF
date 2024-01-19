@@ -6,7 +6,7 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 08:16:30 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/15 09:05:09 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/19 18:18:48 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,19 +73,19 @@ void	fill_origines(t_referencial *origines)
 	origines->img_height = (int)((origines->window_height) * 0.8);
 	origines->x_start_origine = (int)((origines->img_width) * 0.1);
 	origines->y_start_origine = (int)((origines->img_height) * 0.5);
-	origines->scale = 3;
+	origines->scale = 1;
 	b = 1;
-	while (b && origines->scale < 15)
+	while (b && origines->scale < 21)
 	{
 		b = 0;
-		if (origines->x_axis_lenght < (origines->img_width / origines->scale))
+		if (origines->x_axis_lenght < ((origines->img_width - origines->x_start_origine) / origines->scale))
 		{
-			origines->scale += 3;
+			origines->scale += 1;
 			b = 1;
 		}
-		if (origines->y_axis_lenght < (origines->img_height / origines->scale))
+		if (origines->y_axis_lenght < ((origines->img_height - origines->y_start_origine) / origines->scale))
 		{
-			origines->scale += 3;
+			origines->scale += 1;
 			b = 1;
 		}
 	}
@@ -118,14 +118,16 @@ t_map	*read_map(int argc, char **argv, t_referencial *origines)
 
 	map = NULL;
 	if (argc != 2)
+	{
+		ft_printf("You must insert one file !!");
 		return (0);
+	}
 	int fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
 	{
 		ft_printf("Error: Could not open file %s !!\n", argv[1]);
 		return (0);
 	}
-
 	line = get_next_line(fd);
 	while (line)
 	{

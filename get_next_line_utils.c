@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akrid <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 19:50:53 by akrid             #+#    #+#             */
-/*   Updated: 2023/11/24 19:50:56 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/16 18:25:57 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,24 +71,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		str[i + j] = s2[j];
 	str[i + j] = '\0';
 	return (str);
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-	int				i;
-
-	if (!s)
-		return (NULL);
-	i = 0;
-	while (s[i])
-	{
-		if ((unsigned char)s[i] == (unsigned char)c)
-			return ((char *)&s[i]);
-		i ++;
-	}
-	if ((unsigned char)c == (unsigned char) '\0')
-		return ((char *)&s[i]);
-	return (NULL);
 }
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)

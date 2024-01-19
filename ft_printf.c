@@ -3,14 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akrid <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 14:27:23 by akrid             #+#    #+#             */
-/*   Updated: 2023/11/29 14:27:32 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/16 18:23:47 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+# include <stdio.h>
+# include <unistd.h>
+# include <stdarg.h>
+# include "printf_utils.c"
+# include "fdf.h"
 
 static int	check_conversion(const char **c, va_list *args)
 {
