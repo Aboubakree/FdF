@@ -6,11 +6,45 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 02:02:40 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/19 18:14:42 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/20 19:00:25 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+
+int	get_r(int trgb)
+{
+	return ((trgb >> 16) & 0xFF);
+}
+
+int	get_g(int trgb)
+{
+	return ((trgb >> 8) & 0xFF);
+}
+
+int	get_b(int trgb)
+{
+	return (trgb & 0xFF);
+}
+
+int	create_rgb(int r, int g, int b)
+{
+	return (r << 16 | g << 8 | b);
+}
+
+
+float   get_gradient_color(float start_color, float end_color, float t)
+{
+    float red;
+    float green;
+    float blue;
+
+    red = get_r((int)start_color) + t * (get_r((int)end_color) - get_r((int)start_color));
+    green = get_g((int)start_color) + t * ((int)get_g(end_color) - get_g((int)start_color));
+    blue = get_b((int)start_color) + t * (get_b((int)end_color) - get_b((int)start_color));
+    return (create_rgb((int)red, (int)green, (int)blue));
+}
 
 
 int get_steps(t_point point1, t_point point2)
@@ -26,25 +60,35 @@ int get_steps(t_point point1, t_point point2)
     
 }
 
-void draw_line(t_img img, t_point point1, t_point point2)
+float   get_color_increment(t_point start, t_point end, int steps)
+{
+    if (start.x == end.x)
+        return ((end.y - start.y) / steps);
+    if (start.y == end.y)
+        return ((end.x - start.x) / steps);
+    return ((end.x - start.x) / steps);
+}
+
+void draw_line(t_img img, t_point point1, t_point point2, int k)
 {
 	float   x_increment;
 	float   y_increment;
     t_point result_point;
-    int     k;
 
 	x_increment = (point2.x - point1.x) / (float)get_steps(point1, point2);
 	y_increment = (point2.y - point1.y) / (float)get_steps(point1, point2);
     result_point.x = point1.x;
     result_point.y = point1.y;
     result_point.color = point1.color;
-	put_pixel_img(img, (int)result_point.x, (int)result_point.y, 0xFFFFFF);
+	put_pixel_img(img, (int)result_point.x, (int)result_point.y, (int)result_point.color);
     k = 0;
 	while(k < get_steps(point1, point2))
 	{
-		result_point.x = result_point.x + x_increment;
-		result_point.y = result_point.y + y_increment;
-		put_pixel_img(img, (int)result_point.x, (int)result_point.y, 0xFFFFFF);
+		result_point.x += x_increment;
+		result_point.y += y_increment;
+        result_point.color = get_gradient_color(point2.color, point1.color,
+                                get_color_increment(result_point, point2, get_steps(point1, point2)));
+		put_pixel_img(img, (int)result_point.x, (int)result_point.y, (int)result_point.color);
         k++;
 	}
 }
@@ -129,6 +173,13 @@ t_point get_next_X_point(t_map *map, int j, int y, t_referencial origines)
     point.y = y * origines.scale + origines.y_start_origine;
     point.z = ft_atoi(map->z_plus_color_values[j + 1]);
     point.color = get_point_color(map->z_plus_color_values[j + 1]);
+    if (origines.projection == 3)
+    {
+        // point.x = (point.x - point.z) * cos(45);
+        // point.y = (point.y + point.z) * sin(45);
+        // point.x = 0.5 * (point.x - point.y);
+        // point.y = 1.2 * (point.x + point.y) - point.z;
+    }
     return (point);
 }
 
@@ -140,7 +191,32 @@ t_point get_next_Y_point(t_map *map, int j, int y, t_referencial origines)
     point.y = (y + 1) * origines.scale + origines.y_start_origine;
     point.z = ft_atoi(map->z_plus_color_values[j]);
     point.color = get_point_color(map->z_plus_color_values[j]);
+    if (origines.projection == 3)
+    {
+        // point.x = (point.x - point.z) * cos(45);
+        // point.y = (point.y + point.z) * sin(45);
+        // point.x = 0.5 * (point.x - point.y);
+        // point.y = 1.2 * (point.x + point.y) - point.z;
+    }
     return (point);
+}
+
+t_point get_current_point(t_map *map, int j, int y, t_referencial origines)
+{
+    t_point current_point;
+
+    current_point.x = j * origines.scale + origines.x_start_origine;
+    current_point.y = y * origines.scale + origines.y_start_origine;
+    current_point.z = ft_atoi(map->z_plus_color_values[j]);
+    current_point.color = get_point_color(map->z_plus_color_values[j]);
+    if (origines.projection == 3)
+    {
+        // current_point.x = (current_point.x - current_point.z) * cos(45);
+        // current_point.y = (current_point.y + current_point.z) * sin(45);
+        // current_point.x = 0.5 * (current_point.x - current_point.y);
+        // current_point.y = 1.2 * (current_point.x + current_point.y) - current_point.z;
+    }
+    return (current_point);
 }
 
 void   draw_map_get_X(t_img img,t_map  *map, t_referencial origines, int y)
@@ -148,23 +224,22 @@ void   draw_map_get_X(t_img img,t_map  *map, t_referencial origines, int y)
     t_point current_point;
     t_point next_point;
     int     j;
+    int     k_helper;
     
     j = 0;
+    k_helper = 0;
     while (j < origines.x_axis_lenght)
     {
-        current_point.x = j * origines.scale + origines.x_start_origine;
-        current_point.y = y * origines.scale + origines.y_start_origine;
-        current_point.z = ft_atoi(map->z_plus_color_values[j]);  
-        current_point.color = get_point_color(map->z_plus_color_values[j]);
+        current_point = get_current_point(map, j, y, origines);
         if (j < origines.x_axis_lenght - 1)
         {
             next_point = get_next_X_point(map, j, y, origines);
-            draw_line(img, current_point, next_point);
+            draw_line(img, current_point, next_point, k_helper);
         }
         if (y < origines.y_axis_lenght - 1)
         {
             next_point = get_next_Y_point(map->next, j, y, origines);
-            draw_line(img, current_point, next_point);
+            draw_line(img, current_point, next_point, k_helper);
         }
         j ++;
     }

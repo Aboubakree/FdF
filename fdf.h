@@ -6,7 +6,7 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 21:40:01 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/16 18:25:25 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/20 15:42:37 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct s_point
     float     x;
     float     y;
     float     z;
-    int     color;
+    float     color;
 }              t_point;
 
 typedef struct s_referencial
@@ -67,6 +67,7 @@ typedef struct s_referencial
     int scale;
     int	x_axis_lenght;
     int	y_axis_lenght;
+    int projection;
 }               t_referencial;
 
 char	    *ft_strchr(const char *s, int c);

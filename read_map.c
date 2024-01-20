@@ -6,7 +6,7 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 08:16:30 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/19 18:18:48 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/20 18:54:38 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,36 +63,37 @@ void	get_z_values(t_map	**map)
 	}
 }
 
-void	fill_origines(t_referencial *origines)
+void	fill_origines(t_referencial *origines, int b)
 {
-	int	b;
-
 	origines->window_width = 1920;
 	origines->window_height = 1080;
 	origines->img_width = (int)((origines->window_width) * 0.8);
 	origines->img_height = (int)((origines->window_height) * 0.8);
-	origines->x_start_origine = (int)((origines->img_width) * 0.1);
-	origines->y_start_origine = (int)((origines->img_height) * 0.5);
+	origines->x_start_origine = (int)((origines->img_width) * 0);
+	origines->y_start_origine = (int)((origines->img_height) * 0);
 	origines->scale = 1;
+	origines->projection = 3;
 	b = 1;
-	while (b && origines->scale < 21)
-	{
-		b = 0;
-		if (origines->x_axis_lenght < ((origines->img_width - origines->x_start_origine) / origines->scale))
-		{
-			origines->scale += 1;
-			b = 1;
-		}
-		if (origines->y_axis_lenght < ((origines->img_height - origines->y_start_origine) / origines->scale))
-		{
-			origines->scale += 1;
-			b = 1;
-		}
-	}
+	// while (b && origines->scale < 21)
+	// {
+	// 	b = 0;
+	// 	if (origines->x_axis_lenght < ((origines->img_width - origines->x_start_origine) / origines->scale))
+	// 	{
+	// 		origines->scale += 1;
+	// 		b = 1;
+	// 	}
+	// 	if (origines->y_axis_lenght < ((origines->img_height - origines->y_start_origine) / origines->scale))
+	// 	{
+	// 		origines->scale += 1;
+	// 		b = 1;
+	// 	}
+	// }
 }
 
 void	check_map(t_map *map,t_referencial *origines)
 {
+	int	b;
+
 	origines->x_axis_lenght = get_X_lenth(map->z_plus_color_values);
 	if (map->next)
 		map = map->next;
@@ -108,7 +109,8 @@ void	check_map(t_map *map,t_referencial *origines)
 		}
 		map = map->next;
 	}
-	fill_origines(origines);
+	b = 1;
+	fill_origines(origines, b);
 }
 
 t_map	*read_map(int argc, char **argv, t_referencial *origines)
