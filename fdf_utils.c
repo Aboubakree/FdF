@@ -6,7 +6,7 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 03:32:06 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/17 15:57:15 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/24 02:35:55 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,33 @@ void	put_pixel_img(t_img img, int x, int y, int color)
 		*(unsigned int *)dst = color;
 	}
 }
-int     exit_tutorial(t_img *img)
+
+void	free_map(t_map *map)
+{
+	t_map	*temp;
+	int		i;
+
+	while (map)
+	{
+		temp = map;
+		map = map->next;
+		free(temp->line);
+		i = 0;
+		while (temp->z_plus_color_values[i])
+			free(temp->z_plus_color_values[i++]);
+		free(temp->z_plus_color_values);
+		free(temp);
+	}
+}
+
+int	exit_tutorial(t_img *img)
 {
 	if (img)
-		mlx_destroy_window (img->window.mlx_ptr, img->window.window_ptr);
+	{
+		if (img->img_ptr)
+			mlx_destroy_image(img->window.mlx_ptr, img->img_ptr);
+		if (img->window.window_ptr)
+			mlx_destroy_window(img->window.mlx_ptr, img->window.window_ptr);
+	}
 	exit(EXIT_SUCCESS);
 }

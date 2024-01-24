@@ -6,39 +6,37 @@
 /*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 14:27:23 by akrid             #+#    #+#             */
-/*   Updated: 2024/01/16 18:23:47 by akrid            ###   ########.fr       */
+/*   Updated: 2024/01/24 01:20:25 by akrid            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <stdio.h>
-# include <unistd.h>
-# include <stdarg.h>
-# include "printf_utils.c"
-# include "fdf.h"
+#include "fdf.h"
+#include <stdarg.h>
+#include <stdio.h>
+#include <unistd.h>
 
-static int	check_conversion(const char **c, va_list *args)
+int	check_conversion(const char **c, va_list *args)
 {
 	char	*str;
 
-	str = (char *) *c;
+	str = (char *)*c;
 	if (*str == 'c')
-		return (str ++, ft_putchar(va_arg(*args, int)));
+		return (str++, ft_putchar(va_arg(*args, int)));
 	if (*str == 's')
-		return (str ++, ft_putstr(va_arg(*args, char *)));
+		return (str++, ft_putstr(va_arg(*args, char *)));
 	if (*str == 'p')
-		return (str++,
-			ft_puthex((unsigned long) va_arg(*args, void *),
+		return (str++, ft_puthex((unsigned long)va_arg(*args, void *),
 				"0123456789abcdef", 'p'));
 	if (*str == 'd' || *str == 'i')
 		return (str++, ft_putnbr(va_arg(*args, int)));
 	if (*str == 'u')
-		return (str++, ft_putnbr((unsigned) va_arg(*args, int)));
+		return (str++, ft_putnbr((unsigned)va_arg(*args, int)));
 	if (*str == 'x')
-		return (str++,
-			ft_puthex((unsigned) va_arg(*args, int), "0123456789abcdef", 'x'));
+		return (str++, ft_puthex((unsigned)va_arg(*args, int),
+				"0123456789abcdef", 'x'));
 	if (*str == 'X')
-		return (str++,
-			ft_puthex((unsigned) va_arg(*args, int), "0123456789ABCDEF", 'X'));
+		return (str++, ft_puthex((unsigned)va_arg(*args, int),
+				"0123456789ABCDEF", 'X'));
 	if (*str == '%')
 		return (str++, ft_putchar('%'));
 	return (0);
@@ -55,14 +53,14 @@ int	ft_printf(const char *str, ...)
 	{
 		if (*str == '%')
 		{
-			str ++;
+			str++;
 			if (!(*str))
 				break ;
 			count += check_conversion(&str, &args);
 		}
 		else
 			count += ft_putchar(*str);
-		str ++;
+		str++;
 	}
 	va_end(args);
 	return (count);

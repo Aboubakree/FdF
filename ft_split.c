@@ -25,12 +25,12 @@ static int	count_words(char const *s, char c)
 	{
 		if (s[i] != c && b)
 		{
-			count ++;
+			count++;
 			b = 0;
 		}
 		if (s[i] == c && b == 0)
 			b = 1;
-		i ++;
+		i++;
 	}
 	return (count);
 }
@@ -45,7 +45,7 @@ static int	count_len(char const *s, char c, int *i)
 	while (s[*i])
 	{
 		if (s[*i] != c)
-			count ++;
+			count++;
 		if (s[*i] == c)
 			return (count);
 		*i = *i + 1;
@@ -76,7 +76,7 @@ static char	**allocat_mem(char const *s, char c)
 			free(temp);
 			return (NULL);
 		}
-		k ++;
+		k++;
 	}
 	temp[k] = NULL;
 	return (temp);
@@ -92,21 +92,21 @@ static char	**copy_splited(char **split, char const *s, char c, int j)
 	{
 		k = 0;
 		while (s[j] == c)
-			j ++;
+			j++;
 		while (s[j])
 		{
 			if (s[j] != c)
-				split[i][k ++] = s[j];
+				split[i][k++] = s[j];
 			if (s[j] == c)
 			{
 				split[i][k] = '\0';
 				break ;
 			}
-			j ++;
+			j++;
 		}
 		if (s[j] == '\0')
 			split[i][k] = '\0';
-		i ++;
+		i++;
 	}
 	return (split);
 }

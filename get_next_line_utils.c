@@ -19,7 +19,7 @@ size_t	ft_strlen(const char *s)
 
 	i = 0;
 	while (s[i])
-		i ++;
+		i++;
 	return (i);
 }
 
@@ -40,7 +40,7 @@ char	*ft_strdup(const char *s1)
 	while (i < s_len)
 	{
 		dup[i] = (char)s1[i];
-		i ++;
+		i++;
 	}
 	dup[i] = '\0';
 	return (dup);

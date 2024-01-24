@@ -1,8 +1,4 @@
-#!/bin/bash
+#!/ bin / bash
 
-while true
-    do
-        clear
-        leaks $1
-        sleep 5
-    done
+while
+true do clear leaks $1 sleep 5 done

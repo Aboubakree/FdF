@@ -1,68 +1,44 @@
-#include <mlx.h>
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: akrid <akrid@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/24 00:38:54 by akrid             #+#    #+#             */
+/*   Updated: 2024/01/24 04:00:09 by akrid            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-typedef struct	s_data {
-	void	*img;
-	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-}				t_data;
+#include "fdf.h"
 
-typedef struct	s_vars {
-	void	*mlx;
-	void	*win;
-}				t_vars;
 
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
+int	read_keys(int key_pressed, void *param)
 {
-	char	*dst;
+	t_img	*img;
 
-	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
-}
-
-int	close(t_vars *vars)
-{
-	mlx_destroy_window(vars->mlx, vars->win);
+	img = (t_img *)param;
+	if (key_pressed == ESC || !img)
+		exit_tutorial(img);
 	return (0);
 }
 
-int	main(void)
+int	main(int argc, char **argv)
 {
-	t_data	img;
-	t_vars	vars;
+	t_img			img;
+	t_map			*map;
+	t_referencial	origines;
 
-	vars.mlx = mlx_init();
-	// if (mlx == NULL)
-	// 	return (1);
-	vars.win = mlx_new_window(vars.mlx, 700, 700, "Hello world!");
-	// if (mlx_win == NULL)
-	// {
-	// 	free(mlx);
-	// 	return (1);
-	// }
-
-	img.img = mlx_new_image(vars.mlx, 600, 600);
-	// if (mlx_win == NULL)
-	// {
-	// 	free(mlx_win);
-	// 	free(mlx);
-	// 	return (1);
-	// }
-
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,&img.endian);
-
-	my_mlx_pixel_put(&img, 0, 0, 0xFF0000);
-
-	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
-	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 599);
-	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 599, 0);
-	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 599, 599);
-
-	mlx_hook(vars.win, 2, 1L<<0, close, &vars);
-
-	mlx_loop(vars.mlx);
+	map = NULL;
+	map = read_map(argc, argv, &origines);
+	if (!map)
+		return (1);
+	img = new_img(origines.window_width, origines.window_height,
+			origines.img_width, origines.img_height);
+	draw_map_get_y(img, map, origines);
+    mlx_key_hook(img.window.window_ptr, read_keys, &img);
+	mlx_hook(img.window.window_ptr, 17, 0, exit_tutorial, &img);
+	mlx_loop(img.window.mlx_ptr);
+	free_map(map);
+	return (0);
 }

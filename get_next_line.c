@@ -61,10 +61,10 @@ void	*reading_failed(char **line)
 
 char	*get_next_line(int fd)
 {
-	char			buff[BUFFER_SIZE + 1];
-	static char		*line = NULL;
-	char			*last;
-	ssize_t			s;
+	char		buff[BUFFER_SIZE + 1];
+	static char	*line = NULL;
+	char		*last;
+	ssize_t		s;
 
 	if (BUFFER_SIZE < 1 || fd < 0 || read(fd, buff, 0))
 		return (reading_failed(&line));
@@ -75,7 +75,7 @@ char	*get_next_line(int fd)
 		if (s < 1)
 		{
 			if (line != NULL && line[0] != '\0' && s != -1)
-			{	
+			{
 				last = line;
 				line = NULL;
 				return (last);
